@@ -1,0 +1,18 @@
+[package]
+name = "ocbaes128"
+version = "0.1.0"
+authors = ["Alex Rozgo <alex.rozgo@gmail.com>"]
+
+[dependencies.ocbaes128_sys]
+version = "*"
+path = "ocbaes128-sys"
+
+[lib]
+name = "ocbaes128"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ocbaes128"
+path = "src/bin.rs"
+
+
