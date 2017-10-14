@@ -1,24 +1,59 @@
-#![allow(non_upper_case_globals)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
+extern crate ocbaes128_sys;
 
-// include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+pub struct CryptState(ocbaes128_sys::CryptState);
 
-// pub fn force() {
-//         let msg = [0x01u8, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f];
-//         let dec = [0x73u8, 0x99, 0x9d, 0xa2, 0x03, 0x70, 0x00, 0x96, 0xef, 0x55, 0x06, 0x7a, 0x8b, 0xbe, 0x00, 0x07];
-//         let enc = [0x1eu8, 0x2a, 0x9b, 0xd0, 0x2d, 0xa6, 0x8e, 0x46, 0x26, 0x85, 0x83, 0xe9, 0x14, 0x2a, 0xff, 0x2a];
+impl CryptState {
 
-//         unsafe {
-//         let mut cs = CryptState::new();
+    pub fn new() -> Self {
+        unsafe {
+            CryptState(ocbaes128_sys::CryptState::new())
+        }
+    }
+
+    pub fn set_key(&mut self, rkey: &[u8], eiv: &[u8], div: &[u8]) {
+        unsafe {
+            self.0.setKey(rkey.as_ptr(), eiv.as_ptr(), div.as_ptr());
+        }
+    }
+
+    pub fn get_key(&self) -> [u8; 16] {
+        self.0.raw_key
+    }
+
+    pub fn get_encrypt_iv(&self) -> [u8; 16] {
+        self.0.encrypt_iv
+    }
+
+    pub fn get_decrypt_iv(&self) -> [u8; 16] {
+        self.0.decrypt_iv
+    }
+
+    // pub fn set_key(&mut self, rkey: &[u8; 16], eiv: &[u8; 16], div: &[u8; 16]) {
+    //     unsafe {
+    //         self.0.setKey(rkey.as_ptr(), eiv.as_ptr(), div.as_ptr());
+    //     }
+    // }
+
+    pub fn encrypt(&mut self, msg: &[u8]) -> std::vec::Vec<u8> {
+        let mut enc = vec![0u8; msg.len() + 4];
+        unsafe {
+            self.0.encrypt(msg.as_ptr(), enc[..].as_mut_ptr(), msg.len() as u32);
+        }
+        enc
+    }
+
+}
+
+// pub fn encrypt(key: &[u8; 16], nonce: &[u8; 16], msg: &[u8], out: &mut [u8]) -> Vec<u8> {
+//     unsafe {
+//         let mut cs = ocbaes128_sys::CryptState::new();
 //         cs.setKey(msg.as_ptr(), dec.as_ptr(), enc.as_ptr());
-//         }
-// }
 
-// unsigned char rawkey[] = { 0x96, 0x8b, 0x1b, 0x0c, 0x53, 0x1e, 0x1f, 0x80, 0xa6, 0x1d, 0xcb, 0x27, 0x94, 0x09, 0x6f, 0x32, };
-// unsigned char encrypt_iv[] = { 0x1e, 0x2a, 0x9b, 0xd0, 0x2d, 0xa6, 0x8e, 0x46, 0x26, 0x85, 0x83, 0xe9, 0x14, 0x2a, 0xff, 0x2a, };
-// unsigned char decrypt_iv[] = { 0x73, 0x99, 0x9d, 0xa2, 0x03, 0x70, 0x00, 0x96, 0xef, 0x55, 0x06, 0x7a, 0x8b, 0xbe, 0x00, 0x07, };
-// unsigned char crypted[] = { 0x1f, 0xfc, 0xdd, 0xb4, 0x68, 0x13, 0x68, 0xb7, 0x92, 0x67, 0xca, 0x2d, 0xba, 0xb7, 0x0d, 0x44, 0xdf, 0x32, 0xd4, };
+//         // let mut buf = [0u8; 19];
+//         cs.obs_encrypt(msg.as_ptr(), out.as_mut_ptr(), 15);
+//     }
+//     Vec::<u8>::new()
+// }
 
 
 #[cfg(test)]
@@ -28,15 +63,6 @@ mod tests {
 
     #[test]
     fn it_works() {
-
-        // let msg = [0x01u8, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f];
-        // let dec = [0x73u8, 0x99, 0x9d, 0xa2, 0x03, 0x70, 0x00, 0x96, 0xef, 0x55, 0x06, 0x7a, 0x8b, 0xbe, 0x00, 0x07];
-        // let enc = [0x1eu8, 0x2a, 0x9b, 0xd0, 0x2d, 0xa6, 0x8e, 0x46, 0x26, 0x85, 0x83, 0xe9, 0x14, 0x2a, 0xff, 0x2a];
-
-        // unsafe {
-        // let mut cs = OBSAES128SYS_CryptState::new();
-        // cs.setKey(msg.as_ptr(), dec.as_ptr(), enc.as_ptr());
-        // }
         assert_eq!(2 + 2, 4);
     }
 }
