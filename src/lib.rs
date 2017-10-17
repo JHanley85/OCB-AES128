@@ -34,12 +34,17 @@ impl CryptState {
     //     }
     // }
 
-    pub fn encrypt(&mut self, msg: &[u8]) -> std::vec::Vec<u8> {
-        let mut enc = vec![0u8; msg.len() + 4];
+    pub fn encrypt(&mut self, msg: &[u8], enc: &mut [u8]) {
+        // let mut enc = vec![0u8; msg.len() + 4];
         unsafe {
             self.0.encrypt(msg.as_ptr(), enc[..].as_mut_ptr(), msg.len() as u32);
         }
-        enc
+    }
+
+    pub fn decrypt(&mut self, enc: &[u8], dec: &mut [u8]) -> bool {
+        unsafe {
+            self.0.decrypt(enc.as_ptr(), dec.as_mut_ptr(), enc.len() as u32)
+        }
     }
 
 }
