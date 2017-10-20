@@ -28,14 +28,7 @@ impl CryptState {
         self.0.decrypt_iv
     }
 
-    // pub fn set_key(&mut self, rkey: &[u8; 16], eiv: &[u8; 16], div: &[u8; 16]) {
-    //     unsafe {
-    //         self.0.setKey(rkey.as_ptr(), eiv.as_ptr(), div.as_ptr());
-    //     }
-    // }
-
     pub fn encrypt(&mut self, msg: &[u8], enc: &mut [u8]) {
-        // let mut enc = vec![0u8; msg.len() + 4];
         unsafe {
             self.0.encrypt(msg.as_ptr(), enc[..].as_mut_ptr(), msg.len() as u32);
         }
@@ -46,19 +39,7 @@ impl CryptState {
             self.0.decrypt(enc.as_ptr(), dec.as_mut_ptr(), enc.len() as u32)
         }
     }
-
 }
-
-// pub fn encrypt(key: &[u8; 16], nonce: &[u8; 16], msg: &[u8], out: &mut [u8]) -> Vec<u8> {
-//     unsafe {
-//         let mut cs = ocbaes128_sys::CryptState::new();
-//         cs.setKey(msg.as_ptr(), dec.as_ptr(), enc.as_ptr());
-
-//         // let mut buf = [0u8; 19];
-//         cs.obs_encrypt(msg.as_ptr(), out.as_mut_ptr(), 15);
-//     }
-//     Vec::<u8>::new()
-// }
 
 
 #[cfg(test)]
