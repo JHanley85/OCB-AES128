@@ -36,7 +36,7 @@ impl CryptState {
 
     pub fn encrypt(&mut self, msg: &[u8], enc: &mut [u8]) {
         unsafe {
-            self.0.encrypt(msg.as_ptr(), enc[..].as_mut_ptr(), msg.len() as u32);
+            self.0.encrypt(msg.as_ptr(), enc.as_mut_ptr(), msg.len() as u32);
         }
     }
 
