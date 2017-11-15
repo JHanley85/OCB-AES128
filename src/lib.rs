@@ -10,6 +10,12 @@ impl CryptState {
         }
     }
 
+    pub fn is_valid(&self) -> bool {
+        unsafe {
+            self.0.isValid()
+        }
+    }
+
     pub fn set_key(&mut self, rkey: &[u8], eiv: &[u8], div: &[u8]) {
         unsafe {
             self.0.setKey(rkey.as_ptr(), eiv.as_ptr(), div.as_ptr());
