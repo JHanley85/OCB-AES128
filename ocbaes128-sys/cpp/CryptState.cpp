@@ -39,12 +39,12 @@
 
 
 #include "CryptState.h"
-
 #include <openssl/rand.h>
 #include <stdint.h>
 #include <string.h>
+#include <Winsock2.h>
 
-
+//uint32_t htonl(uint32_t);
 CryptState::CryptState() {
 	for (int i = 0; i < 0x100; i++)
 		decrypt_history[i] = 0;
